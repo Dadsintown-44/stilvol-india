@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@theme {
+  --color-primary: #FF5A30;
+  --color-primary-hover: #e04b24;
+  --color-hero-bg: #818589;
+  --color-footer-bg: #1A202C;
+  --color-dark-text: #1F2937;
+  --color-light-text: #6B7280;
+  --color-section-bg: #F8FAFC;
+  --font-sans: var(--font-geom), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-geom), 'Geom', sans-serif;
+  background-color: white;
+  color: var(--color-dark-text);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
