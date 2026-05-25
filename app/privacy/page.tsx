@@ -18,7 +18,7 @@ const fadeUp = {
 export default function PrivacyPolicy() {
   return (
     <>
-      <Header />
+      <Header alwaysGreen />
       <motion.div
         className="min-h-screen bg-white"
         initial="hidden"

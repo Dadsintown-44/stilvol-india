@@ -1,10 +1,17 @@
+export type ColorVariant = {
+  name: string;
+  swatch: string;
+};
+
 export type Product = {
   id: string;
   title: string;
   designer: string;
-  price: string;
+  priceInr: number;
   image: string;
-  colors: string[];
+  description: string;
+  size: string;
+  colorVariants: ColorVariant[];
 };
 
 export type Subcategory = {
@@ -22,6 +29,10 @@ export type Category = {
   subcategories: Subcategory[];
 };
 
+export function formatPriceInr(amount: number): string {
+  return `₹${amount.toLocaleString('en-IN')}`;
+}
+
 export const productCatalog: Category[] = [
   {
     slug: 'wardrobe-systems',
@@ -38,17 +49,31 @@ export const productCatalog: Category[] = [
             id: 'ws-1',
             title: 'Modern Sliding Wardrobe',
             designer: 'Stilvoll Collection',
-            price: '$1,200 USD',
+            priceInr: 99600,
             image: '/products/image2.jpg',
-            colors: ['bg-gray-400', 'bg-[#D2B48C]'],
+            description:
+              'Full-height sliding wardrobe with soft-close track system, ideal for bedrooms and walk-in closets. Premium finish with modular internal layouts.',
+            size: '240 cm (W) × 220 cm (H) × 65 cm (D)',
+            colorVariants: [
+              { name: 'Graphite Grey', swatch: 'bg-gray-400' },
+              { name: 'Warm Oak', swatch: 'bg-[#D2B48C]' },
+              { name: 'Matte White', swatch: 'bg-stone-200' },
+            ],
           },
           {
             id: 'ws-2',
             title: 'Aluminum Framed Sliding Doors',
             designer: 'Stilvoll Design',
-            price: '$1,100 USD',
+            priceInr: 91300,
             image: '/products/image9.jpg',
-            colors: ['bg-stone-600', 'bg-stone-400'],
+            description:
+              'Slim aluminium frame sliding doors with toughened glass infill. Engineered for smooth glide and long-term durability in residential and commercial spaces.',
+            size: 'Custom width up to 360 cm × 240 cm (H)',
+            colorVariants: [
+              { name: 'Anthracite', swatch: 'bg-stone-600' },
+              { name: 'Silver Grey', swatch: 'bg-stone-400' },
+              { name: 'Bronze', swatch: 'bg-amber-700' },
+            ],
           },
         ],
       },
@@ -61,17 +86,29 @@ export const productCatalog: Category[] = [
             id: 'ws-3',
             title: 'Minimalist Open Wardrobe',
             designer: 'Contemporary Line',
-            price: '$890 USD',
+            priceInr: 73870,
             image: '/products/image8.jpg',
-            colors: ['bg-stone-200'],
+            description:
+              'Open-profile wardrobe system with hanging rails, shelves, and optional drawer modules. Clean lines for contemporary interiors.',
+            size: '180 cm (W) × 200 cm (H) × 55 cm (D)',
+            colorVariants: [
+              { name: 'Pearl White', swatch: 'bg-stone-200' },
+              { name: 'Light Ash', swatch: 'bg-stone-300' },
+            ],
           },
           {
             id: 'ws-4',
             title: 'Walk-in Closet Profile',
             designer: 'Modular Designs',
-            price: '$380 USD',
+            priceInr: 31540,
             image: '/products/image4.jpg',
-            colors: ['bg-[#E5E4E2]', 'bg-stone-800'],
+            description:
+              'Aluminium profile kit for walk-in closet partitioning and shelving. Compatible with standard modular fittings.',
+            size: 'Profile length: 3 m per piece (cut-to-size available)',
+            colorVariants: [
+              { name: 'Champagne', swatch: 'bg-[#E5E4E2]' },
+              { name: 'Matte Black', swatch: 'bg-stone-800' },
+            ],
           },
         ],
       },
@@ -92,17 +129,30 @@ export const productCatalog: Category[] = [
             id: 'gp-1',
             title: 'Glass Partition System',
             designer: 'Premium Series',
-            price: '$450 USD',
+            priceInr: 37350,
             image: '/products/image3.jpg',
-            colors: ['bg-amber-600', 'bg-stone-300'],
+            description:
+              'Frameless glass partition for offices and living spaces. Includes top and bottom track with safety tempered glass.',
+            size: 'Panel: 90 cm (W) × 240 cm (H) per module',
+            colorVariants: [
+              { name: 'Bronze Glass', swatch: 'bg-amber-600' },
+              { name: 'Clear Frost', swatch: 'bg-stone-300' },
+              { name: 'Smoked Grey', swatch: 'bg-gray-500' },
+            ],
           },
           {
             id: 'gp-2',
             title: 'Fluted Glass Partition',
             designer: 'Architectural Solutions',
-            price: '$1,050 USD',
+            priceInr: 87150,
             image: '/products/image7.jpg',
-            colors: ['bg-gray-500'],
+            description:
+              'Decorative fluted glass partition with aluminium channel frame. Adds privacy while preserving natural light flow.',
+            size: '120 cm (W) × 270 cm (H) per panel',
+            colorVariants: [
+              { name: 'Fluted Clear', swatch: 'bg-gray-500' },
+              { name: 'Fluted Bronze', swatch: 'bg-amber-700' },
+            ],
           },
         ],
       },
@@ -115,9 +165,15 @@ export const productCatalog: Category[] = [
             id: 'gp-3',
             title: 'Space & Structure Panel',
             designer: 'Premium Series',
-            price: '$980 USD',
+            priceInr: 81340,
             image: '/products/image13.jpg',
-            colors: ['bg-stone-400'],
+            description:
+              'Structural glass panel system for feature walls and zone separation. Premium hardware and silicone glazing included.',
+            size: '150 cm (W) × 300 cm (H)',
+            colorVariants: [
+              { name: 'Stone Grey', swatch: 'bg-stone-400' },
+              { name: 'Ice Clear', swatch: 'bg-stone-200' },
+            ],
           },
         ],
       },
@@ -138,9 +194,15 @@ export const productCatalog: Category[] = [
             id: 'ap-1',
             title: 'Shutter Profile Series A',
             designer: 'Stilvoll Collection',
-            price: '$320 USD',
+            priceInr: 26560,
             image: '/products/image4.jpg',
-            colors: ['bg-[#E5E4E2]', 'bg-stone-800'],
+            description:
+              'Heavy-duty aluminium shutter profile with reinforced wall thickness for kitchen and wardrobe shutters.',
+            size: 'Standard bar: 19 mm × 3 m length',
+            colorVariants: [
+              { name: 'Champagne', swatch: 'bg-[#E5E4E2]' },
+              { name: 'Matte Black', swatch: 'bg-stone-800' },
+            ],
           },
         ],
       },
@@ -153,9 +215,15 @@ export const productCatalog: Category[] = [
             id: 'ap-2',
             title: 'Sliding Profile Series B',
             designer: 'Modular Designs',
-            price: '$410 USD',
+            priceInr: 34030,
             image: '/products/image9.jpg',
-            colors: ['bg-stone-600', 'bg-stone-400'],
+            description:
+              'Top-hung and bottom-guided sliding profiles for wardrobe and partition systems. Corrosion-resistant anodized finish.',
+            size: 'Track profile: 25 mm × 3 m length',
+            colorVariants: [
+              { name: 'Anthracite', swatch: 'bg-stone-600' },
+              { name: 'Silver Grey', swatch: 'bg-stone-400' },
+            ],
           },
         ],
       },
@@ -176,9 +244,15 @@ export const productCatalog: Category[] = [
             id: 'dh-1',
             title: 'Door Control Kit Pro',
             designer: 'Architectural Solutions',
-            price: '$540 USD',
+            priceInr: 44820,
             image: '/products/image7.jpg',
-            colors: ['bg-gray-500'],
+            description:
+              'Complete door control kit with hydraulic closer, hinges, and floor spring options for glass and wooden doors.',
+            size: 'For door weight up to 80 kg',
+            colorVariants: [
+              { name: 'Brushed Steel', swatch: 'bg-gray-500' },
+              { name: 'Matte Black', swatch: 'bg-stone-800' },
+            ],
           },
         ],
       },
@@ -199,9 +273,15 @@ export const productCatalog: Category[] = [
             id: 'kh-1',
             title: 'Modular Kitchen Drawer System',
             designer: 'Stilvoll Collection',
-            price: '$620 USD',
+            priceInr: 51460,
             image: '/products/image8.jpg',
-            colors: ['bg-stone-200'],
+            description:
+              'Soft-close drawer runners with full extension and high load capacity. Suitable for base and pan drawers.',
+            size: '450 mm & 500 mm drawer lengths',
+            colorVariants: [
+              { name: 'Pearl White', swatch: 'bg-stone-200' },
+              { name: 'Graphite', swatch: 'bg-gray-500' },
+            ],
           },
         ],
       },
@@ -214,9 +294,16 @@ export const productCatalog: Category[] = [
             id: 'kh-2',
             title: 'Kitchen Fitting Set Elite',
             designer: 'Premium Series',
-            price: '$290 USD',
+            priceInr: 24070,
             image: '/products/image2.jpg',
-            colors: ['bg-gray-400', 'bg-[#D2B48C]'],
+            description:
+              'Elite kitchen handle and organizer set including knobs, pulls, and mounting hardware for modular kitchens.',
+            size: 'Set of 12 pieces (mixed sizes)',
+            colorVariants: [
+              { name: 'Graphite Grey', swatch: 'bg-gray-400' },
+              { name: 'Warm Oak', swatch: 'bg-[#D2B48C]' },
+              { name: 'Brushed Nickel', swatch: 'bg-stone-300' },
+            ],
           },
         ],
       },

@@ -18,7 +18,7 @@ const fadeUp = {
 export default function TermsAndConditions() {
   return (
     <>
-      <Header />
+      <Header alwaysGreen />
       <motion.div
         className="min-h-screen bg-white"
         initial="hidden"

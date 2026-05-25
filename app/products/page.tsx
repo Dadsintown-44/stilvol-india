@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import ProductsSection from '../../components/products/ProductsSection';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
@@ -11,9 +12,11 @@ export const metadata = {
 export default function ProductsPage() {
   return (
     <>
-      <Header />
+      <Header alwaysGreen />
       <main>
-        <ProductsSection />
+        <Suspense fallback={null}>
+          <ProductsSection />
+        </Suspense>
       </main>
       <Footer />
     </>

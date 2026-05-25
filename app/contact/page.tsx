@@ -10,7 +10,7 @@ export const metadata = {
 export default function ContactPage() {
   return (
     <>
-      <Header />
+      <Header alwaysGreen />
       <main>
         <ContactSection />
       </main>

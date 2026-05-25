@@ -1,4 +1,4 @@
-// import GallerySection from '../../components/Gallery/GallerySection';
+import GallerySection from '../../components/gallery/GallerySection';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 
@@ -11,9 +11,9 @@ export const metadata = {
 export default function GalleryPage() {
   return (
     <>
-      <Header />
+      <Header alwaysGreen />
       <main>
-        {/* <GallerySection /> */}
+        <GallerySection />
       </main>
       <Footer />
     </>

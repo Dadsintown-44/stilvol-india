@@ -1,63 +1,115 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { productCatalog, type Product } from './catalog';
+import { useSearchParams } from 'next/navigation';
+import { productCatalog, formatPriceInr, type Product } from './catalog';
+import ProductDetail from './ProductDetail';
 
-function ProductCard({ image, title, designer, price, colors }: Product) {
+function ProductCard({ product, onSelect }: { product: Product; onSelect: () => void }) {
   return (
-    <div className="flex flex-col group cursor-pointer">
+    <button
+      type="button"
+      onClick={onSelect}
+      className="flex flex-col group cursor-pointer text-left w-full"
+    >
       <div className="relative aspect-[4/5] bg-[#F4F1ED] mb-6 overflow-hidden flex items-center justify-center transition-all duration-500 group-hover:shadow-xl">
         <Image
-          src={image}
-          alt={title}
+          src={product.image}
+          alt={product.title}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute top-4 right-4 flex gap-2 z-10">
-          {colors.map((c, i) => (
+          {product.colorVariants.map((variant) => (
             <div
-              key={i}
-              className={`w-6 h-6 rounded-full ${c} shadow-md border-2 border-white/50`}
+              key={variant.name}
+              className={`w-6 h-6 rounded-full ${variant.swatch} shadow-md border-2 border-white/50`}
             />
           ))}
         </div>
       </div>
       <div className="text-center text-sm space-y-1.5">
-        <h3 className="font-medium text-gray-800 text-base">{title}</h3>
-        <p className="text-gray-500 text-xs tracking-wide">{designer}</p>
-        <p className="font-bold text-gray-900 mt-2">{price}</p>
+        <h3 className="font-medium text-gray-800 text-base">{product.title}</h3>
+        <p className="text-gray-500 text-xs tracking-wide">{product.designer}</p>
+        <p className="font-bold text-gray-900 mt-2">{formatPriceInr(product.priceInr)}</p>
       </div>
-    </div>
+    </button>
   );
 }
 
 export default function ProductsSection() {
+  const searchParams = useSearchParams();
   const [activeCategorySlug, setActiveCategorySlug] = useState<string | null>(null);
   const [activeSubcategorySlug, setActiveSubcategorySlug] = useState<string | null>(null);
+  const [activeProductId, setActiveProductId] = useState<string | null>(null);
+  const [searchNotFound, setSearchNotFound] = useState(false);
+
+  useEffect(() => {
+    const productId = searchParams.get('product');
+    const categorySlug = searchParams.get('category');
+    const subcategorySlug = searchParams.get('subcategory');
+    const notFound = searchParams.get('notFound');
+
+    if (notFound === '1') {
+      setSearchNotFound(true);
+      return;
+    }
+
+    setSearchNotFound(false);
+
+    if (productId && categorySlug && subcategorySlug) {
+      const category = productCatalog.find((c) => c.slug === categorySlug);
+      const subcategory = category?.subcategories.find((s) => s.slug === subcategorySlug);
+      const product = subcategory?.products.find((p) => p.id === productId);
+
+      if (category && subcategory && product) {
+        setActiveCategorySlug(categorySlug);
+        setActiveSubcategorySlug(subcategorySlug);
+        setActiveProductId(productId);
+      }
+    }
+  }, [searchParams]);
 
   const activeCategory = productCatalog.find((c) => c.slug === activeCategorySlug);
   const activeSubcategory = activeCategory?.subcategories.find(
     (s) => s.slug === activeSubcategorySlug
   );
+  const activeProduct = activeSubcategory?.products.find((p) => p.id === activeProductId);
 
   const resetToCategories = () => {
     setActiveCategorySlug(null);
     setActiveSubcategorySlug(null);
+    setActiveProductId(null);
   };
 
   const selectCategory = (slug: string) => {
     setActiveCategorySlug(slug);
     setActiveSubcategorySlug(null);
+    setActiveProductId(null);
   };
 
   const selectSubcategory = (slug: string) => {
     setActiveSubcategorySlug(slug);
+    setActiveProductId(null);
+  };
+
+  const backToSubcategory = () => {
+    setActiveProductId(null);
   };
 
   return (
     <section className="bg-[#FAF9F6] pt-28 pb-24 px-6 md:px-12 lg:px-20 text-[#333] min-h-screen">
       <div className="max-w-[1400px] mx-auto">
+        {searchNotFound && (
+          <div
+            role="alert"
+            className="mb-8 px-4 py-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-sm text-center"
+          >
+            Product not found. No such item present.
+          </div>
+        )}
+
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-serif tracking-tight text-[#1F2937] mb-4">
             Product Catalogue
@@ -83,9 +135,12 @@ export default function ProductsSection() {
               <span>/</span>
               <button
                 type="button"
-                onClick={() => setActiveSubcategorySlug(null)}
+                onClick={() => {
+                  setActiveSubcategorySlug(null);
+                  setActiveProductId(null);
+                }}
                 className={`hover:text-[#39795F] transition-colors ${
-                  !activeSubcategory ? 'text-[#39795F] font-medium' : ''
+                  !activeSubcategory && !activeProduct ? 'text-[#39795F] font-medium' : ''
                 }`}
               >
                 {activeCategory.name}
@@ -95,7 +150,21 @@ export default function ProductsSection() {
           {activeSubcategory && (
             <>
               <span>/</span>
-              <span className="text-[#39795F] font-medium">{activeSubcategory.name}</span>
+              <button
+                type="button"
+                onClick={backToSubcategory}
+                className={`hover:text-[#39795F] transition-colors ${
+                  !activeProduct ? 'text-[#39795F] font-medium' : ''
+                }`}
+              >
+                {activeSubcategory.name}
+              </button>
+            </>
+          )}
+          {activeProduct && (
+            <>
+              <span>/</span>
+              <span className="text-[#39795F] font-medium">{activeProduct.title}</span>
             </>
           )}
         </nav>
@@ -158,7 +227,16 @@ export default function ProductsSection() {
           </div>
         )}
 
-        {activeCategory && activeSubcategory && (
+        {activeCategory && activeSubcategory && activeProduct && (
+          <ProductDetail
+            product={activeProduct}
+            categoryName={activeCategory.name}
+            subcategoryName={activeSubcategory.name}
+            onBack={backToSubcategory}
+          />
+        )}
+
+        {activeCategory && activeSubcategory && !activeProduct && (
           <div>
             <div className="mb-10 pb-8 border-b border-stone-200/60">
               <p className="text-xs uppercase tracking-[0.2em] text-[#39795F] font-semibold mb-2">
@@ -187,7 +265,11 @@ export default function ProductsSection() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
               {activeSubcategory.products.map((product) => (
-                <ProductCard key={product.id} {...product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onSelect={() => setActiveProductId(product.id)}
+                />
               ))}
             </div>
           </div>

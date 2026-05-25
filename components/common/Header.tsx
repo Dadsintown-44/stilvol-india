@@ -1,15 +1,30 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, type FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import type { Variants } from 'framer-motion';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
+import {
+  searchProducts,
+  getProductSearchSuggestions,
+  type ProductSearchResult,
+} from '../products/searchProducts';
 
-export default function Header() {
+export default function Header({ alwaysGreen = false }: { alwaysGreen?: boolean }) {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchError, setSearchError] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const searchSuggestions = useMemo(
+    () => getProductSearchSuggestions(searchQuery),
+    [searchQuery]
+  );
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -39,10 +54,37 @@ export default function Header() {
     visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } },
   };
 
+  const openProduct = (result: ProductSearchResult) => {
+    const params = new URLSearchParams({
+      product: result.product.id,
+      category: result.categorySlug,
+      subcategory: result.subcategorySlug,
+    });
+    router.push(`/products?${params.toString()}`);
+    setSearchQuery('');
+    setSearchError(false);
+    setShowSuggestions(false);
+    setMenuOpen(false);
+  };
+
+  const handleProductSearch = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSearchError(false);
+    setShowSuggestions(false);
+
+    const result = searchProducts(searchQuery);
+    if (result) {
+      openProduct(result);
+      return;
+    }
+
+    setSearchError(true);
+  };
+
   return (
     <>
       <header className={`fixed top-0 left-0 w-full z-50 py-4 px-4 sm:px-10 flex items-center justify-between transition-all shadow-sm border-b border-white/10 ${
-          scrolled ? 'bg-[#39795F]' : 'transparent'
+          alwaysGreen || scrolled ? 'bg-[#39795F]' : 'transparent'
         }`}>
         {/* Logo Area */}
         <div className="flex items-center gap-3">
@@ -58,8 +100,65 @@ export default function Header() {
           </Link>
         </div>
 
+        <form
+          onSubmit={handleProductSearch}
+          className="relative flex flex-1 min-w-0 max-w-[9rem] xs:max-w-[12rem] sm:max-w-md mx-2 sm:mx-4 lg:mx-10"
+        >
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 pointer-events-none" />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setSearchError(false);
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+            placeholder="Search for products"
+            className="w-full pl-10 pr-4 py-2 rounded-sm bg-white/15 border border-white/25 text-white placeholder:text-white/70 text-sm focus:outline-none focus:bg-white/25 focus:border-white/40"
+            aria-label="Search for products"
+            aria-autocomplete="list"
+            aria-expanded={showSuggestions && searchQuery.trim().length >= 2}
+          />
+          {showSuggestions && searchQuery.trim().length >= 2 && (
+            <ul
+              role="listbox"
+              className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-sm shadow-lg border border-stone-200/80 overflow-hidden z-[60] max-h-64 overflow-y-auto"
+            >
+              {searchSuggestions.length > 0 ? (
+                searchSuggestions.map((item) => (
+                  <li key={item.product.id} role="option">
+                    <button
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => openProduct(item)}
+                      className="w-full text-left px-3 py-2.5 text-sm text-[#1F2937] hover:bg-[#FAF9F6] transition-colors border-b border-stone-100 last:border-0"
+                    >
+                      <span className="font-medium block">{item.product.title}</span>
+                      <span className="text-xs text-gray-500">{item.product.designer}</span>
+                    </button>
+                  </li>
+                ))
+              ) : (
+                <li className="px-3 py-2.5 text-sm text-gray-500">
+                  No matching products
+                </li>
+              )}
+            </ul>
+          )}
+          {searchError && !showSuggestions && (
+            <p
+              role="alert"
+              className="absolute top-full left-0 right-0 mt-1.5 text-xs text-white bg-[#2d5c49] px-3 py-2 rounded-sm shadow-lg z-[60]"
+            >
+              Product not found. No such item present.
+            </p>
+          )}
+        </form>
+
         {/* Navigation - Open Drawer Button */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <motion.button
             whileTap={{ scale: 0.9 }}
             className="text-white hover:text-[#FF5A30] p-2 flex items-center gap-2 transition-colors mr-2 sm:mr-8"

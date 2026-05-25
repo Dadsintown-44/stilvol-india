@@ -65,21 +65,21 @@ export default function FeaturedProductsSection() {
             image="/products/image2.jpg"
             title="Modern Sliding Wardrobe"
             designer="Stilvoll Collection"
-            price="$1,200 USD"
+            price="₹99,600"
             colors={['bg-gray-400', 'bg-[#D2B48C]']}
           />
           <ProductCard 
             image="/products/image3.jpg"
             title="Glass Partition System"
             designer="Premium Series"
-            price="$450 USD"
+            price="₹37,350"
             colors={['bg-amber-600', 'bg-stone-300']}
           />
           <ProductCard 
             image="/products/image4.jpg"
             title="Walk-in Closet Profile"
             designer="Modular Designs"
-            price="$380 USD"
+            price="₹31,540"
             colors={['bg-[#E5E4E2]', 'bg-stone-800']}
           />
         </div>
@@ -117,21 +117,21 @@ export default function FeaturedProductsSection() {
             image="/products/image7.jpg"
             title="Fluted Glass Partition"
             designer="Architectural Solutions"
-            price="$1,050 USD"
+            price="₹87,150"
             colors={['bg-gray-500']}
           />
           <ProductCard 
             image="/products/image8.jpg"
             title="Minimalist Open Wardrobe"
             designer="Contemporary Line"
-            price="$890 USD"
+            price="₹73,870"
             colors={['bg-stone-200']}
           />
           <ProductCard 
             image="/products/image9.jpg"
             title="Aluminum Framed Sliding Doors"
             designer="Stilvoll Design"
-            price="$1,100 USD"
+            price="₹91,300"
             colors={['bg-stone-600', 'bg-stone-400']}
           />
         </div>
