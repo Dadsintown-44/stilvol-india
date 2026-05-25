@@ -55,24 +55,22 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-4 flex flex-col items-start pr-4 md:pr-12">
             <div className="flex items-center gap-3 mb-6 lg:mb-8">
-              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 8C4 5.79086 5.79086 4 8 4H18C19.1046 4 20 4.89543 20 6V16C20 18.2091 18.2091 20 16 20H6C4.89543 20 4 19.1046 4 18V8Z" fill="#FBBF24"/>
-                <path d="M8 12C8 9.79086 9.79086 8 12 8H22C23.1046 8 24 8.89543 24 10V20C24 22.2091 22.2091 24 20 24H10C8.89543 24 8 23.1046 8 22V12Z" fill="#2563EB"/>
-              </svg>
-              <span className="text-[22px] font-bold text-white tracking-tight">Stilvoll India</span>
+              <img src="/logo2.png" alt="Stilvoll India Logo" className="w-[180px] h-auto object-contain" />
+              {/* <span className="text-[22px] font-bold text-white tracking-tight">Stilvoll India</span> */}
             </div>
-            <p className="text-white/80 text-[15px] leading-[1.8] mb-6 lg:mb-8 max-w-sm">
-              Amet minim mollit non deserunt ullamco est sit
-              aliqua dolor do amet sint. Velit officia consequat
-              duis enim velit mollit.
+            <p className="text-white/80 text-justify text-[15px] leading-[1.8] mb-6 lg:mb-8 max-w-sm">
+              Elevating modern interiors with premium aluminium solutions.
+Specialized in wardrobe and partition profiles crafted with precision.
+Minimal, durable, and designed for sophisticated spaces.
+Delivering elegance and functionality across Mumbai.
             </p>
-            <button className="bg-white hover:bg-white hover:text-[#39795F] text-[#39795F] px-6 py-3.5 rounded-md flex items-center gap-2.5 font-medium transition-colors text-[15px] shadow-sm hover:shadow-md">
+            <Link href="/contact" className="bg-white hover:bg-white hover:text-[#39795F] text-[#39795F] px-6 py-3.5 rounded-md flex items-center gap-2.5 font-medium transition-colors text-[15px] shadow-sm hover:shadow-md inline-flex">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
                 <path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/>
               </svg>
               Contact Us
-            </button>
+            </Link>
           </div>
 
           <div className="lg:col-span-2">
@@ -81,9 +79,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <FooterColumn title="Help" links={helpLinks} />
           </div>
-          <div className="lg:col-span-2">
-            <FooterColumn title="Resources" links={resourceLinks} />
-          </div>
+        
           <div className="lg:col-span-2">
             <FooterColumn title="Extra Links" links={extraLinks} />
           </div>

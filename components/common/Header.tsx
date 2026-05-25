@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -20,17 +20,28 @@ export default function Header({ alwaysGreen = false }: { alwaysGreen?: boolean 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchError, setSearchError] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
-  const searchSuggestions = useMemo(
-    () => getProductSearchSuggestions(searchQuery),
-    [searchQuery]
-  );
+  const [searchSuggestions, setSearchSuggestions] = useState<ProductSearchResult[]>([]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    const timeoutId = setTimeout(async () => {
+      const results = await getProductSearchSuggestions(searchQuery);
+      if (active) {
+        setSearchSuggestions(results);
+      }
+    }, 180);
+
+    return () => {
+      active = false;
+      clearTimeout(timeoutId);
+    };
+  }, [searchQuery]);
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -55,24 +66,29 @@ export default function Header({ alwaysGreen = false }: { alwaysGreen?: boolean 
   };
 
   const openProduct = (result: ProductSearchResult) => {
-    const params = new URLSearchParams({
-      product: result.product.id,
-      category: result.categorySlug,
-      subcategory: result.subcategorySlug,
-    });
-    router.push(`/products?${params.toString()}`);
+    // Navigate to the custom URL format requested by the user
+    let customPath = '';
+    if (result.type === 'category') {
+      customPath = `category=${encodeURIComponent(result.categoryName)}`;
+    } else if (result.type === 'subcategory') {
+      customPath = `category=${encodeURIComponent(result.categoryName)} / ${encodeURIComponent(result.subcategoryName!)}`;
+    } else {
+      customPath = `category=${encodeURIComponent(result.categoryName)} / ${encodeURIComponent(result.subcategoryName!)} / ${encodeURIComponent(result.productName!)}`;
+    }
+    
+    router.push(`/${customPath}`);
     setSearchQuery('');
     setSearchError(false);
     setShowSuggestions(false);
     setMenuOpen(false);
   };
 
-  const handleProductSearch = (e: FormEvent<HTMLFormElement>) => {
+  const handleProductSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSearchError(false);
     setShowSuggestions(false);
 
-    const result = searchProducts(searchQuery);
+    const result = await searchProducts(searchQuery);
     if (result) {
       openProduct(result);
       return;
@@ -100,9 +116,12 @@ export default function Header({ alwaysGreen = false }: { alwaysGreen?: boolean 
           </Link>
         </div>
 
+        {/* Spacer to push search to the right */}
+        <div className="flex-1" />
+
         <form
           onSubmit={handleProductSearch}
-          className="relative flex flex-1 min-w-0 max-w-[9rem] xs:max-w-[12rem] sm:max-w-md mx-2 sm:mx-4 lg:mx-10"
+          className="relative flex w-full max-w-[140px] sm:max-w-[220px] mx-2 sm:mx-4"
         >
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70 pointer-events-none" />
           <input
@@ -128,15 +147,17 @@ export default function Header({ alwaysGreen = false }: { alwaysGreen?: boolean 
             >
               {searchSuggestions.length > 0 ? (
                 searchSuggestions.map((item) => (
-                  <li key={item.product.id} role="option">
+                  <li key={item.id} role="option">
                     <button
                       type="button"
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => openProduct(item)}
-                      className="w-full text-left px-3 py-2.5 text-sm text-[#1F2937] hover:bg-[#FAF9F6] transition-colors border-b border-stone-100 last:border-0"
+                      className="w-full text-left px-3 py-2.5 text-sm text-[#1F2937] hover:bg-[#FAF9F6] transition-colors border-b border-stone-100 last:border-0 flex justify-between items-center"
                     >
-                      <span className="font-medium block">{item.product.title}</span>
-                      <span className="text-xs text-gray-500">{item.product.designer}</span>
+                      <span className="font-medium truncate pr-2">{item.name}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded shrink-0">
+                        {item.type}
+                      </span>
                     </button>
                   </li>
                 ))
@@ -161,7 +182,7 @@ export default function Header({ alwaysGreen = false }: { alwaysGreen?: boolean 
         <div className="flex items-center gap-3 shrink-0">
           <motion.button
             whileTap={{ scale: 0.9 }}
-            className="text-white hover:text-[#FF5A30] p-2 flex items-center gap-2 transition-colors mr-2 sm:mr-8"
+            className="text-white hover:text-white/75 p-2 flex items-center gap-2 transition-colors mr-2 sm:mr-8"
             onClick={() => setMenuOpen(true)}
             aria-label="Toggle menu"
           >
@@ -199,7 +220,7 @@ export default function Header({ alwaysGreen = false }: { alwaysGreen?: boolean 
                   whileHover={{ rotate: 90 }}
                   transition={{ duration: 0.3 }}
                   onClick={() => setMenuOpen(false)}
-                  className="p-2 text-[#1F2937] hover:text-[#FF5A30] transition-colors"
+                  className="p-2 text-[#1F2937] hover:text-[#39795F] transition-colors"
                   aria-label="Close menu"
                 >
                   <X className="w-8 h-8" />

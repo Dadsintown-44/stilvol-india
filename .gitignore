@@ -4,3 +4,4 @@ out/
 .env
 .env.local
 .env.productiongit add .
+/app/generated/prisma

@@ -1,36 +1,36 @@
-export type ColorVariant = {
+export type CatalogColor = {
   id: string;
   name: string;
   image: string | null;
   sortOrder: number;
 };
 
-export type Product = {
+export type CatalogProduct = {
   id: string;
   dbId: string;
   name: string;
   description: string;
   image: string | null;
   sortOrder: number;
-  colorVariants: ColorVariant[];
+  colorVariants: CatalogColor[];
 };
 
-export type Subcategory = {
+export type CatalogSubcategory = {
   slug: string;
   dbId: string;
   name: string;
   description: string;
   image: string | null;
   sortOrder: number;
-  products: Product[];
+  products: CatalogProduct[];
 };
 
-export type Category = {
+export type CatalogCategory = {
   slug: string;
   dbId: string;
   name: string;
   description: string;
   image: string | null;
   sortOrder: number;
-  subcategories: Subcategory[];
+  subcategories: CatalogSubcategory[];
 };
